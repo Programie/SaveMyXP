@@ -16,6 +16,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.PluginManager;
@@ -164,27 +166,23 @@ public final class SaveMyXP extends JavaPlugin implements Listener {
             saveConfig();
             player.sendMessage(ChatColor.GREEN + "XP sign removed");
         } else {
-            for (BlockFace blockFace : BLOCK_FACES) {
-                Block faceBlock = block.getRelative(blockFace);
-                Material faceBlockType = faceBlock.getType();
-
-                if (Tag.WALL_SIGNS.isTagged(faceBlockType)) {
-                    Sign signBlock = (Sign) faceBlock.getState();
-                    BlockFace attachedFace = ((WallSign) signBlock.getBlockData()).getFacing();
-                    if (blockFace.equals(attachedFace) && isXPSign(signBlock)) {
-                        event.setCancelled(true);
-                        break;
-                    }
-                }
-
-                if (blockFace.equals(BlockFace.UP) && Tag.STANDING_SIGNS.isTagged(faceBlockType)) {
-                    Sign signBlock = (Sign) faceBlock.getState();
-                    if (isXPSign(signBlock)) {
-                        event.setCancelled(true);
-                        break;
-                    }
-                }
+            if (hasBlockXPSign(block)) {
+                event.setCancelled(true);
             }
+        }
+    }
+
+    @EventHandler
+    public void onBlockPistonExtend(BlockPistonExtendEvent event) {
+        if (hasBlockXPSign(event.getBlocks())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onBlockPistonRetract(BlockPistonRetractEvent event) {
+        if (hasBlockXPSign(event.getBlocks())) {
+            event.setCancelled(true);
         }
     }
 
@@ -238,6 +236,40 @@ public final class SaveMyXP extends JavaPlugin implements Listener {
 
     private boolean isXPSign(Sign sign) {
         return isXPSign(sign.getLines());
+    }
+
+    private boolean hasBlockXPSign(Block block) {
+        for (BlockFace blockFace : BLOCK_FACES) {
+            Block faceBlock = block.getRelative(blockFace);
+            Material faceBlockType = faceBlock.getType();
+
+            if (Tag.WALL_SIGNS.isTagged(faceBlockType)) {
+                Sign signBlock = (Sign) faceBlock.getState();
+                BlockFace attachedFace = ((WallSign) signBlock.getBlockData()).getFacing();
+                if (blockFace.equals(attachedFace) && isXPSign(signBlock)) {
+                    return true;
+                }
+            }
+
+            if (blockFace.equals(BlockFace.UP) && Tag.STANDING_SIGNS.isTagged(faceBlockType)) {
+                Sign signBlock = (Sign) faceBlock.getState();
+                if (isXPSign(signBlock)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private boolean hasBlockXPSign(List<Block> blocks) {
+        for (Block block : blocks) {
+            if (hasBlockXPSign(block)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private Sign getSignFromBlock(Block block) {
