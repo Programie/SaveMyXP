@@ -16,9 +16,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockBurnEvent;
+import org.bukkit.event.block.BlockDamageEvent;
+import org.bukkit.event.block.BlockExplodeEvent;
+import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -182,6 +187,20 @@ public final class SaveMyXP extends JavaPlugin implements Listener {
     @EventHandler
     public void onBlockPistonRetract(BlockPistonRetractEvent event) {
         if (hasBlockXPSign(event.getBlocks())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onBlockBurn(BlockBurnEvent event) {
+        if (hasBlockXPSign(event.getBlock())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onEntityExplode(EntityExplodeEvent event) {
+        if (hasBlockXPSign(event.blockList())) {
             event.setCancelled(true);
         }
     }
