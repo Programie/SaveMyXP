@@ -4,7 +4,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
@@ -19,10 +21,13 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 public final class SaveMyXP extends JavaPlugin implements Listener {
     final static String FIRST_LINE = "[SaveMyXP]";
+    final static List<BlockFace> BLOCK_FACES = Arrays.asList(BlockFace.UP, BlockFace.EAST, BlockFace.NORTH, BlockFace.WEST, BlockFace.SOUTH);
     private ConfigurationSection signsConfigSection;
 
     @Override
@@ -133,29 +138,54 @@ public final class SaveMyXP extends JavaPlugin implements Listener {
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         Block block = event.getBlock();
+        Material blockType = block.getType();
 
-        Sign signBlock = getSignFromBlock(block);
+        if (Tag.SIGNS.isTagged(blockType)) {
+            Sign signBlock = getSignFromBlock(block);
 
-        if (signBlock == null) {
-            return;
+            if (signBlock == null) {
+                return;
+            }
+
+            if (!isXPSign(signBlock)) {
+                return;
+            }
+
+            Player player = event.getPlayer();
+
+            ConfigurationSection configSection = getConfigSection(signBlock);
+            if (!player.getUniqueId().toString().equalsIgnoreCase(configSection.getString("player")) && !player.hasPermission("savemyxp.destroy-any")) {
+                player.sendMessage(ChatColor.RED + "This is not your own XP sign!");
+                event.setCancelled(true);
+                return;
+            }
+
+            signsConfigSection.set(getConfigSectionPath(signBlock.getLocation()), null);
+            saveConfig();
+            player.sendMessage(ChatColor.GREEN + "XP sign removed");
+        } else {
+            for (BlockFace blockFace : BLOCK_FACES) {
+                Block faceBlock = block.getRelative(blockFace);
+                Material faceBlockType = faceBlock.getType();
+
+                if (Tag.WALL_SIGNS.isTagged(faceBlockType)) {
+                    Sign signBlock = (Sign) faceBlock.getState();
+                    BlockFace attachedFace = ((WallSign) signBlock.getBlockData()).getFacing();
+                    if (blockFace.equals(attachedFace) && isXPSign(signBlock)) {
+                        event.setCancelled(true);
+                        break;
+                    }
+                }
+
+                if (blockFace.equals(BlockFace.UP) && Tag.STANDING_SIGNS.isTagged(faceBlockType)) {
+                    Sign signBlock = (Sign) faceBlock.getState();
+                    if (isXPSign(signBlock)) {
+                        event.setCancelled(true);
+                        break;
+                    }
+                }
+            }
         }
-
-        if (!isXPSign(signBlock)) {
-            return;
-        }
-
-        Player player = event.getPlayer();
-
-        ConfigurationSection configSection = getConfigSection(signBlock);
-        if (!player.getUniqueId().toString().equalsIgnoreCase(configSection.getString("player")) && !player.hasPermission("savemyxp.destroy-any")) {
-            player.sendMessage(ChatColor.RED + "This is not your own XP sign!");
-            event.setCancelled(true);
-            return;
-        }
-
-        signsConfigSection.set(getConfigSectionPath(signBlock.getLocation()), null);
-        saveConfig();
-        player.sendMessage(ChatColor.GREEN + "XP sign removed");
     }
 
     private ConfigurationSection getConfigSection(Sign sign) {
