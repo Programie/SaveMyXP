@@ -240,10 +240,13 @@ public final class SaveMyXP extends JavaPlugin implements Listener {
         OfflinePlayer player = getServer().getOfflinePlayer(signData.getUUID());
         String playerName = player.getName();
 
+        int level = (int) Experience.getLevelFromExp(xp);
+        int remainingXP = xp - Experience.getExpFromLevel(level);
+
         sign.setLine(0, ChatColor.BLUE + FIRST_LINE);
         sign.setLine(1, playerName == null ? "" : playerName);
-        sign.setLine(2, "Level: " + (int) Experience.getLevelFromExp(xp));
-        sign.setLine(3, "XP: " + xp);
+        sign.setLine(2, "Level: " + level);
+        sign.setLine(3, "XP: " + remainingXP);
         sign.update();
     }
 
