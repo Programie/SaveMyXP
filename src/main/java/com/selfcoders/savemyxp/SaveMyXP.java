@@ -104,9 +104,19 @@ public final class SaveMyXP extends JavaPlugin implements Listener {
             return;
         }
 
+        int configTransferAmount = getConfig().getInt("transfer-amount");
+
         switch (event.getAction()) {
             case LEFT_CLICK_BLOCK:
                 int addXP = Experience.getExp(player);
+
+                // Transfer the configured amount if sneaking and the player has enough XP, otherwise transfer the whole XP to the sign
+                if (player.isSneaking()) {
+                    if (addXP > configTransferAmount) {
+                        addXP = configTransferAmount;
+                    }
+                }
+
                 signData.addXP(addXP);
                 updateSign(block);
                 player.setExp(0);
@@ -121,9 +131,11 @@ public final class SaveMyXP extends JavaPlugin implements Listener {
                     return;
                 }
 
-                int withdrawXP = getConfig().getInt("withdraw-amount");
-                if (withdrawXP > signXP) {
-                    withdrawXP = signXP;
+                int withdrawXP = signXP;
+
+                // Withdraw the configured amount if not sneaking and sign has enough XP, otherwise withdraw the whole amount of XP on the sign
+                if (!player.isSneaking() && signXP > configTransferAmount) {
+                    withdrawXP = configTransferAmount;
                 }
 
                 Experience.changeExp(player, withdrawXP);
