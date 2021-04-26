@@ -110,6 +110,11 @@ public final class SaveMyXP extends JavaPlugin implements Listener {
             case LEFT_CLICK_BLOCK:
                 int addXP = Experience.getExp(player);
 
+                if (addXP == 0) {
+                    player.sendMessage(ChatColor.RED + "You do not have any XP!");
+                    return;
+                }
+
                 // Transfer the configured amount if sneaking and the player has enough XP, otherwise transfer the whole XP to the sign
                 if (player.isSneaking()) {
                     if (addXP > configTransferAmount) {
