@@ -97,11 +97,12 @@ public class Experience {
             exp = 0;
         }
 
-        double levelAndExp = getLevelFromExp(exp);
+        int level = (int) getLevelFromExp(exp);
+        int xpAtLevel = getExpFromLevel(level);
 
-        int level = (int) levelAndExp;
         player.setLevel(level);
-        player.setExp((float) (levelAndExp - level));
+        player.setExp(0);
+        player.giveExp(exp - xpAtLevel);
     }
 
 }
