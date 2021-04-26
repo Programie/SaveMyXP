@@ -21,20 +21,14 @@ public class SignData {
     public void set(Player player, int xp) {
         configSection.set("player", player.getUniqueId().toString());
         configSection.set("xp", xp);
-
-        plugin.saveConfig();
     }
 
     public void remove() {
         plugin.getConfig().set("sign." + getConfigSectionPath(location), null);
-
-        plugin.saveConfig();
     }
 
     public void addXP(int xp) {
         configSection.set("xp", configSection.getInt("xp") + xp);
-
-        plugin.saveConfig();
     }
 
     public UUID getUUID() {

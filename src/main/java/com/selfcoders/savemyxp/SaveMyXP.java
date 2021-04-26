@@ -21,6 +21,7 @@ import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -38,6 +39,11 @@ public final class SaveMyXP extends JavaPlugin implements Listener {
         PluginManager pluginManager = getServer().getPluginManager();
 
         pluginManager.registerEvents(this, this);
+    }
+
+    @Override
+    public void onDisable() {
+        saveConfig();
     }
 
     @EventHandler
@@ -195,6 +201,11 @@ public final class SaveMyXP extends JavaPlugin implements Listener {
         if (hasBlockXPSign(event.blockList())) {
             event.setCancelled(true);
         }
+    }
+
+    @EventHandler
+    public void onWorldSave(WorldSaveEvent event) {
+        saveConfig();
     }
 
     private SignData getSignData(Location location) {
