@@ -119,8 +119,7 @@ public final class SaveMyXP extends JavaPlugin implements Listener {
 
                 signData.addXP(addXP);
                 updateSign(block);
-                player.setExp(0);
-                player.setLevel(0);
+                Experience.changeExp(player, -addXP);
                 player.sendMessage(ChatColor.GREEN + "Transferred " + addXP + " XP (" + (int) Experience.getLevelFromExp(addXP) + " levels) to your XP sign");
                 break;
             case RIGHT_CLICK_BLOCK:
