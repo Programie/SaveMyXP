@@ -161,8 +161,16 @@ public final class SaveMyXP extends JavaPlugin implements Listener {
             Player player = event.getPlayer();
 
             ConfigurationSection configSection = getConfigSection(signBlock);
-            if (!player.getUniqueId().toString().equalsIgnoreCase(configSection.getString("player")) && !player.hasPermission("savemyxp.destroy-any")) {
+            boolean isOwnSign = player.getUniqueId().toString().equalsIgnoreCase(configSection.getString("player"));
+
+            if (!isOwnSign && !player.hasPermission("savemyxp.destroy-any")) {
                 player.sendMessage(ChatColor.RED + "This is not your own XP sign!");
+                event.setCancelled(true);
+                return;
+            }
+
+            if (isOwnSign && configSection.getInt("xp") > 0) {
+                player.sendMessage(ChatColor.RED + "Please withdraw the stored XP from the sign first");
                 event.setCancelled(true);
                 return;
             }
