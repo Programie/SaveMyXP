@@ -24,7 +24,7 @@ public class SignData {
     }
 
     public void remove() {
-        plugin.getConfig().set("sign." + getConfigSectionPath(location), null);
+        plugin.getConfig().set("signs." + getConfigSectionPath(location), null);
     }
 
     public void addXP(int xp) {
