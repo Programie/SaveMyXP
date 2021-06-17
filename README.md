@@ -15,7 +15,7 @@ Then this plugin is the right one for you! It allows you to place an unlimited a
 
 ## Installation
 
-You can get the latest release from [GitLab](https://gitlab.com/Programie/SaveMyXP/pipelines?scope=tags).
+You can get the latest release from [GitLab](https://gitlab.com/Programie/SaveMyXP/-/releases) and [CurseForge](https://www.curseforge.com/minecraft/bukkit-plugins/savemyxp).
 
 ## Permissions
 
