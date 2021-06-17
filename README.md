@@ -5,17 +5,14 @@ A Minecraft Bukkit plugin to save your XP by using a sign.
 ![](screenshot.jpg)
 
 [![pipeline status](https://gitlab.com/Programie/SaveMyXP/badges/master/pipeline.svg)](https://gitlab.com/Programie/SaveMyXP/commits/master)
-[![download latest release](https://img.shields.io/badge/download-latest-blue.svg)](https://gitlab.com/Programie/SaveMyXP/-/jobs/artifacts/master/raw/target/SaveMyXP.jar?job=release)
+[![download from GitLab](https://img.shields.io/badge/download-Releases-blue?logo=gitlab)](https://gitlab.com/Programie/SaveMyXP/-/releases)
+[![download from CurseForge](https://img.shields.io/badge/download-CurseForge-blue?logo=curseforge)](https://www.curseforge.com/minecraft/bukkit-plugins/savemyxp)
 
 ## What is it?
 
 Did you ever reach the moment where you have too many XP on your player and wanted to just keep them somewhere save before losing them in the Nether?
 
 Then this plugin is the right one for you! It allows you to place an unlimited amount of signs securely storing your XPs by just hitting it with your empty hand.
-
-## Installation
-
-You can get the latest release from [GitLab](https://gitlab.com/Programie/SaveMyXP/-/releases) and [CurseForge](https://www.curseforge.com/minecraft/bukkit-plugins/savemyxp).
 
 ## Permissions
 
