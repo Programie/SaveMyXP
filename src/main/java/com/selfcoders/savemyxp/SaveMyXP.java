@@ -1,16 +1,14 @@
 package com.selfcoders.savemyxp;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Tag;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.WallSign;
+import org.bukkit.block.sign.Side;
+import org.bukkit.block.sign.SignSide;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -55,19 +53,27 @@ public final class SaveMyXP extends JavaPlugin implements Listener {
         Player player = event.getPlayer();
         Block block = event.getBlock();
 
-        if (!player.hasPermission("savemyxp.create")) {
-            player.sendMessage(ChatColor.RED + "You do not have the required permissions to create XP signs!");
-            block.breakNaturally();
+        Sign signBlock = getSignFromBlock(block);
+        if (signBlock == null) {
             return;
         }
 
-        SignData signData = getSignData(block.getLocation());
+        if (!player.hasPermission("savemyxp.create")) {
+            player.sendMessage(ChatColor.RED + "You do not have the required permissions to create XP signs!");
+            event.setCancelled(true);
+            return;
+        }
+
+        if (!signBlock.isWaxed()) {
+            signBlock.setWaxed(true);
+            signBlock.update();
+        }
+
+        SignData signData = getSignData(signBlock.getLocation());
         signData.set(player, 0);
 
-        event.setLine(0, ChatColor.BLUE + FIRST_LINE);
-        event.setLine(1, player.getName());
-        event.setLine(2, "Level: 0");
-        event.setLine(3, "XP: 0");
+        // Use delayed task, otherwise the sign is not updated if using sign.setLine() instead of event.setLine()
+        Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> updateSign(signBlock));
 
         player.sendMessage(ChatColor.GREEN + "XP sign placed");
     }
@@ -88,6 +94,11 @@ public final class SaveMyXP extends JavaPlugin implements Listener {
 
         if (!isXPSign(signBlock)) {
             return;
+        }
+
+        if (!signBlock.isWaxed()) {
+            signBlock.setWaxed(true);
+            signBlock.update();
         }
 
         Player player = event.getPlayer();
@@ -123,7 +134,7 @@ public final class SaveMyXP extends JavaPlugin implements Listener {
                 }
 
                 signData.addXP(addXP);
-                updateSign(block);
+                updateSign(signBlock);
                 Experience.changeExp(player, -addXP);
                 player.sendMessage(ChatColor.GREEN + "Transferred " + addXP + " XP (" + (int) Experience.getLevelFromExp(addXP) + " levels) to your XP sign");
                 break;
@@ -144,7 +155,7 @@ public final class SaveMyXP extends JavaPlugin implements Listener {
 
                 Experience.changeExp(player, withdrawXP);
                 signData.addXP(-withdrawXP);
-                updateSign(block);
+                updateSign(signBlock);
                 player.sendMessage(ChatColor.GREEN + "Transferred " + withdrawXP + " XP from your XP sign");
                 break;
         }
@@ -228,13 +239,8 @@ public final class SaveMyXP extends JavaPlugin implements Listener {
         return new SignData(this, location);
     }
 
-    private void updateSign(Block block) {
-        Sign sign = getSignFromBlock(block);
-        if (sign == null) {
-            return;
-        }
-
-        SignData signData = getSignData(block.getLocation());
+    private void updateSign(Sign sign) {
+        SignData signData = getSignData(sign.getLocation());
         int xp = signData.getXP();
 
         OfflinePlayer player = getServer().getOfflinePlayer(signData.getUUID());
@@ -243,10 +249,13 @@ public final class SaveMyXP extends JavaPlugin implements Listener {
         int level = (int) Experience.getLevelFromExp(xp);
         int remainingXP = xp - Experience.getExpFromLevel(level);
 
-        sign.setLine(0, ChatColor.BLUE + FIRST_LINE);
-        sign.setLine(1, playerName == null ? "" : playerName);
-        sign.setLine(2, "Level: " + level);
-        sign.setLine(3, "XP: " + remainingXP);
+        SignSide signSide = sign.getSide(Side.FRONT);
+
+        signSide.setLine(0, ChatColor.BLUE + FIRST_LINE);
+        signSide.setLine(1, playerName == null ? "" : playerName);
+        signSide.setLine(2, "Level: " + level);
+        signSide.setLine(3, "XP: " + remainingXP);
+
         sign.update();
     }
 
@@ -255,7 +264,7 @@ public final class SaveMyXP extends JavaPlugin implements Listener {
     }
 
     private boolean isXPSign(Sign sign) {
-        return isXPSign(sign.getLines());
+        return isXPSign(sign.getSide(Side.FRONT).getLines());
     }
 
     private boolean hasBlockXPSign(Block block) {

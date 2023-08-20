@@ -29,7 +29,7 @@ There are no commands.
 
 ## How to use it?
 
-Just create a sign with the text `[SaveMyXP]` on the first line.
+Just create a sign (not a hanging sign!) with the text `[SaveMyXP]` on the first line.
 
 Once successfully placing the sign, your player name will appear on the second line.
 
