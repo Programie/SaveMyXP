@@ -15,10 +15,10 @@
 
   <name>SaveMyXP</name>
   <description>Save your XP to a sign</description>
-  <url>https://gitlab.com/Programie/SaveMyXP</url>
+  <url>https://github.com/Programie/SaveMyXP</url>
 
   <scm>
-    <developerConnection>scm:git:ssh://git@gitlab.com/Programie/SaveMyXP.git</developerConnection>
+    <developerConnection>scm:git:ssh://git@github.com/Programie/SaveMyXP.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
 

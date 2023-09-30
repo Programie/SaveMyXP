@@ -4,10 +4,11 @@ A Minecraft Bukkit plugin to save your XP by using a sign.
 
 ![](screenshot.jpg)
 
-[![pipeline status](https://gitlab.com/Programie/SaveMyXP/badges/master/pipeline.svg)](https://gitlab.com/Programie/SaveMyXP/commits/master)
-[![download from GitLab](https://img.shields.io/badge/download-Releases-blue?logo=gitlab)](https://gitlab.com/Programie/SaveMyXP/-/releases)
+[![actions status](https://github.com/Programie/SaveMyXP/actions/workflows/build.yml/badge.svg)](https://github.com/Programie/SaveMyXP/actions/workflows/build.yml)
+[![download from GitHub](https://img.shields.io/badge/download-Releases-blue?logo=github)](https://github.com/Programie/SaveMyXP/releases/latest)
 [![download from Modrinth](https://img.shields.io/badge/download-Modrinth-blue?logo=modrinth)](https://modrinth.com/plugin/savemyxp)
 [![download from CurseForge](https://img.shields.io/badge/download-CurseForge-blue?logo=curseforge)](https://www.curseforge.com/minecraft/bukkit-plugins/savemyxp)
+[![view on Website](https://img.shields.io/badge/view-Website-blue)](https://selfcoders.com/projects/savemyxp)
 
 ## What is it?
 
